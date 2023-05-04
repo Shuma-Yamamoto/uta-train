@@ -1,11 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View, Text } from 'react-native';
+import AddSong from './src/pages/AddSong';
 import TrainSong from './src/pages/TrainSong';
 
 const App = () => {
   return (
     <View style={styles.container}>
-      <TrainSong />
+      <AddSong />
+      {/* <TrainSong /> */}
       <StatusBar style="auto" />
     </View>
   );

@@ -1,40 +1,23 @@
 import React, { useState, useRef } from 'react';
-import { StyleSheet, ScrollView, View, Image, Text, TouchableOpacity, Animated } from 'react-native';
+import { StyleSheet, ScrollView, View, Image, Text, TouchableOpacity } from 'react-native';
 import YouTube from 'react-native-youtube-iframe';
 
 const TrainSong = () => {
-  const playerRef = React.useRef();
-  const scaleValue = useRef(new Animated.Value(1)).current;
+  const playerRef = useRef();
 
   const handleSeekBackward = () => {
     playerRef.current?.getCurrentTime().then(
       currentTime => playerRef.current?.seekTo({currentTime}['currentTime'] - 3)
   )};
 
-  const handlePressIn = () => {
-    Animated.spring(scaleValue, {
-      toValue: 0.9,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const handlePressOut = () => {
-    Animated.spring(scaleValue, {
-      toValue: 1,
-      friction: 3,
-      tension: 40,
-      useNativeDriver: true,
-    }).start();
-  };
-
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.container}>
       <Image
         source={require('../../assets/back.png')}
         style={styles.back}
       />
-      <View style={styles.songContainer}>
-        <Text style={styles.song}>
+      <View style={styles.titleContainer}>
+        <Text style={styles.title}>
           心予報
         </Text>
       </View>
@@ -90,14 +73,11 @@ const TrainSong = () => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           onPress={handleSeekBackward}
-          onPressIn={handlePressIn}
-          onPressOut={handlePressOut}
           activeOpacity={0.8}
         >
-          <Animated.View style={[styles.button, { transform: [{ scale: scaleValue }] }]}>
+          <View style={styles.button}>
             <Text style={styles.buttonText}>3sec.</Text>
-
-          </Animated.View>
+          </View>
         </TouchableOpacity>
       </View>
     </View>
@@ -114,12 +94,12 @@ const styles = StyleSheet.create({
     top: 71.5,
     left: 25,
   },
-  songContainer: {
+  titleContainer: {
     position: 'absolute',
     top: 70,
     left: 65,
   },
-  song: {
+  title: {
     fontSize: 24,
     fontWeight: 'bold',
   },
@@ -158,7 +138,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#235BC8',
     height: 100,
     width: 1000,
-    borderRadius: 60,
     alignItems: 'center',
     justifyContent: 'center',
   },

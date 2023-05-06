@@ -3,7 +3,7 @@ import { StyleSheet, ScrollView, View, TextInput, Text, Image, TouchableOpacity,
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import HTML from 'react-native-render-html';
 
-const AddSong = () => {
+const AddSong = (props) => {
   const [title, setTitle] = useState('');
   const [artist, setArtist] = useState('');
   const [url, setUrl] = useState('');
@@ -29,10 +29,10 @@ const AddSong = () => {
     };
 
     try {
-      const songsJson = await AsyncStorage.getItem('songs');
-      const songs = songsJson ? JSON.parse(songsJson) : [];
-      songs.push(song);
-      await AsyncStorage.setItem('songs', JSON.stringify(songs));
+      const songsString = await AsyncStorage.getItem('songs');
+      const songsJson = songsString ? JSON.parse(songsString) : [];
+      songsJson.push(song);
+      await AsyncStorage.setItem('songs', JSON.stringify(songsJson));
       setTitle('');
       setArtist('');
       setUrl('');
@@ -44,10 +44,12 @@ const AddSong = () => {
 
   return (
     <View style={styles.container}>
-      <Image
-        source={require('../../assets/back.png')}
-        style={styles.back}
-      />
+      <TouchableOpacity
+        onPress={() => props.switchPage('home')}
+        style={styles.backHome}
+      >
+        <Image source={require('../../assets/back.png')} />
+      </TouchableOpacity>
       <View style={styles.addSongContainer}>
         <Text style={styles.addSong}>
           歌の追加
@@ -114,7 +116,10 @@ const AddSong = () => {
       </View>
       <View style={styles.storeButtonContainer}>
         <TouchableOpacity
-          onPress={saveSong}
+          onPress={() => {
+            saveSong();
+            props.switchPage('home');
+          }}
           activeOpacity={0.8}
         >
           <View style={styles.storeButton}>
@@ -131,7 +136,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
-  back: {
+  backHome: {
     position: 'absolute',
     top: 71.5,
     left: 25,

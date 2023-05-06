@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, ScrollView, View, TextInput, Text, Image, TouchableOpacity, useWindowDimensions, RefreshControl } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AddSong from './AddSong';
+import EditSong from './EditSong';
 import TrainSong from './TrainSong';
 
 const Home = () => {
@@ -9,6 +10,33 @@ const Home = () => {
   const switchPage = (newPage) => {
     setPage(newPage);
   };
+
+  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
+
+  const handleDeletePress = () => {
+    setShowDeleteConfirmation(true);
+  };
+
+  const handleDeleteConfirmed = () => {
+    deleteSong(index);
+    setShowDeleteConfirmation(false);
+  };
+
+  const handleDeleteCancelled = () => {
+    setShowDeleteConfirmation(false);
+  };
+
+  const deleteConfirmationPopup = (
+    <View style={{ flex: 1, top: 100 }}>
+      <Text>本当に削除しますか？</Text>
+      <TouchableOpacity onPress={handleDeleteConfirmed}>
+        <Text>はい</Text>
+      </TouchableOpacity>
+      <TouchableOpacity onPress={handleDeleteCancelled}>
+        <Text>いいえ</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = React.useCallback(() => {
@@ -20,11 +48,13 @@ const Home = () => {
     });
   });
 
+  const [index, setIndex] = useState(0);
   const [title, setTitle] = useState('');
   const [artist, setArtist] = useState('');
   const [url, setUrl] = useState('');
   const [lyric, setLyric] = useState('');
-  const trainSong = (trainTitle, trainArtist, trainUrl, trainLyric) => {
+  const trainSong = (trainIndex, trainTitle, trainArtist, trainUrl, trainLyric) => {
+    setIndex(trainIndex);
     setTitle(trainTitle);
     setArtist(trainArtist);
     setUrl(trainUrl);
@@ -69,6 +99,7 @@ const Home = () => {
               歌一覧
             </Text>
           </View>
+          {showDeleteConfirmation && deleteConfirmationPopup}
           <View style={styles.cardContainer}>
           <ScrollView
             refreshControl={
@@ -79,7 +110,7 @@ const Home = () => {
                 <View key={index}>
                   <TouchableOpacity
                     onPress={() => {
-                      trainSong(item.title, item.artist, item.url.slice(-11), item.lyric);
+                      trainSong(index, item.title, item.artist, item.url.slice(-11), item.lyric);
                       switchPage('train');
                     }}
                     style={styles.songContainer}
@@ -88,11 +119,16 @@ const Home = () => {
                     <Text style={styles.artist}>&nbsp;{item.artist}</Text>
                   </TouchableOpacity>
                   <View style={styles.optionContainer}>
-                    <TouchableOpacity onPress={() => deleteSong(index)}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        trainSong(index, item.title, item.artist, item.url, item.lyric);
+                        switchPage('edit');
+                      }}
+                    >
                         <Text>Edit</Text>
                     </TouchableOpacity>
                     <Text>&nbsp;|&nbsp;</Text>
-                    <TouchableOpacity onPress={() => deleteSong(index)}>
+                    <TouchableOpacity onPress={handleDeletePress}>
                         <Text style={{ color: 'red' }}>Delete</Text>
                     </TouchableOpacity>
                   </View>
@@ -116,6 +152,17 @@ const Home = () => {
       return (
         <AddSong switchPage={switchPage} />
       )
+    case 'edit':
+      return (
+        <EditSong switchPage={switchPage}
+          songsJson={songsJson}
+          index={index}
+          title={title}
+          artist={artist}
+          url={url}
+          lyric={lyric}
+        />
+      )
     case 'train':
       return (
         <TrainSong switchPage={switchPage}
@@ -123,7 +170,6 @@ const Home = () => {
           artist={artist}
           url={url}
           lyric={lyric}
-          reloadSongs={reloadSongs}
         />
       );
   }

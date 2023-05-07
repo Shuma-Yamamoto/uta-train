@@ -17,6 +17,7 @@ const TrainSong = (props) => {
   };
 
   // 色付きの歌詞を表示する
+  const lyric = props.lyric
   const colorPattern = /(red|green|blue|yellow)\((.*?)\)/g;
   const colorMap = {
     red: '#ef858c',
@@ -26,7 +27,7 @@ const TrainSong = (props) => {
   };
 
   const source = {
-    html: props.lyric
+    html: lyric
     .replace(/\n/g, '<br>')
     .replace(colorPattern, (match, color, text) => {
       const backgroundColor = colorMap[color]

@@ -17,7 +17,7 @@ const TrainSong = (props) => {
   };
 
   // 色付きの歌詞を表示する
-  const colorPattern = /(red|green|blue|yellow)\((.*?)\)/g
+  const colorPattern = /(red|green|blue|yellow)\((.*?)\)/g;
   const colorMap = {
     red: '#ef858c',
     green: '#69bd83',

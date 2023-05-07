@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, ScrollView, View, TextInput, Text, Image, TouchableOpacity, useWindowDimensions, RefreshControl } from 'react-native';
+import { StyleSheet, View, ScrollView, Text, TouchableOpacity, RefreshControl } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AddSong from './AddSong';
 import EditSong from './EditSong';

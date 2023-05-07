@@ -1,8 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Home from './src/pages/Home';
-import AddSong from './src/pages/AddSong';
-import TrainSong from './src/pages/TrainSong';
 
 const App = () => {
   return (

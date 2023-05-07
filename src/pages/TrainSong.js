@@ -1,28 +1,45 @@
-import React, { useState, useRef } from 'react';
-import { StyleSheet, ScrollView, View, Image, Text, TouchableOpacity, useWindowDimensions } from 'react-native';
+import React, { useRef } from 'react';
+import { StyleSheet, View, ScrollView, Text, Image, TouchableOpacity, useWindowDimensions } from 'react-native';
 import YouTube from 'react-native-youtube-iframe';
-import HTML from 'react-native-render-html';
+import RenderHTML from 'react-native-render-html';
 
 const TrainSong = (props) => {
+  // 再生位置を３秒戻す
   const playerRef = useRef();
 
-  const handleSeekBackward = () => {
-    playerRef.current?.getCurrentTime().then(
-      currentTime => playerRef.current?.seekTo({currentTime}['currentTime'] - 3)
-  )};
+  const seekBackward = async () => {
+    try {
+      const currentTime = await playerRef.current?.getCurrentTime();
+      playerRef.current?.seekTo(currentTime - 3);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-  const pattern = /(red|green|blue|yellow)\((.*?)\)/g;
-  const lyricHTML = props.lyric
+  // 色付きの歌詞を表示する
+  const colorPattern = /(red|green|blue|yellow)\((.*?)\)/g
+  const colorMap = {
+    red: '#ef858c',
+    green: '#69bd83',
+    blue: '#54c3f1',
+    yellow: '#f2e55c',
+  };
+
+  const source = {
+    html: props.lyric
     .replace(/\n/g, '<br>')
-    .replace(pattern, (match, color, text) =>
-      `<span style="background-color: ${
-        color === 'red' ? '#ef858c' : (color === 'green' ? '#69bd83' : (color === 'blue' ? '#54c3f1' : '#f2e55c'))
-      };">${text}</span>`
-    );
+    .replace(colorPattern, (match, color, text) => {
+      const backgroundColor = colorMap[color]
+      return `<span style="background-color: ${backgroundColor};">${text}</span>`
+    })
+  };
+
   const { width } = useWindowDimensions();
+  const baseStyle = { fontSize: 20 };
 
   return (
     <View style={styles.container}>
+      {/* ヘッダー */}
       <TouchableOpacity
         onPress={() => props.switchPage('home')}
         style={styles.backHome}
@@ -39,29 +56,35 @@ const TrainSong = (props) => {
           {props.artist}
         </Text>
       </View>
+
+      {/* YouTube */}
       <View style={styles.youtubeContainer}>
         <YouTube
-          videoId={props.url}
-          height={300}
           ref={playerRef}
+          height={300}
+          videoId={props.url}
         />
       </View>
+
+      {/* 歌詞 */}
       <View style={styles.lyricContainer}>
         <ScrollView>
-          <HTML
-            baseStyle={{ fontSize: 20 }}
-            source={{ html: lyricHTML }}
+          <RenderHTML
+            source={source}
             contentWidth={width}
+            baseStyle={baseStyle}
           />
         </ScrollView>
       </View>
+
+      {/* ボタン */}
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          onPress={handleSeekBackward}
+          onPress={seekBackward}
           activeOpacity={0.8}
         >
           <View style={styles.button}>
-            <Text style={styles.buttonText}>3sec.</Text>
+            <Text style={styles.buttonText}>3&nbsp;sec.</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -74,6 +97,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+
+  // ヘッダー
   backHome: {
     position: 'absolute',
     top: 71.5,
@@ -97,9 +122,13 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
+
+  // YouTube
   youtubeContainer: {
     top: 150,
   },
+
+  // 歌詞
   lyricContainer: {
     top: 95,
     width: '90%',
@@ -112,6 +141,8 @@ const styles = StyleSheet.create({
   lyric: {
     fontSize: 20,
   },
+
+  // ボタン
   buttonContainer: {
     position: 'absolute',
     bottom: 0,

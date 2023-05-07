@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, ScrollView, Text, TextInput, Image, TouchableOpacity, useWindowDimensions } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import HTML from 'react-native-render-html';
+import RenderHTML from 'react-native-render-html';
 
 const EditSong = (props) => {
   const [title, setTitle] = useState(props.title);
@@ -10,37 +10,39 @@ const EditSong = (props) => {
   const [lyric, setLyric] = useState(props.lyric);
   const [preview, setPreview] = useState(false);
 
-  const pattern = /(red|green|blue|yellow)\((.*?)\)/g;
-  const lyricHTML = lyric
-    .replace(/\n/g, '<br>')
-    .replace(pattern, (match, color, text) =>
-      `<span style="background-color: ${
-        color === 'red' ? '#ef858c' : (color === 'green' ? '#69bd83' : (color === 'blue' ? '#54c3f1' : '#f2e55c'))
-      };">${text}</span>`
-    );
-  const { width } = useWindowDimensions();
+  // 色付きの歌詞を表示する
+  const colorPattern = /(red|green|blue|yellow)\((.*?)\)/g;
+  const colorMap = {
+    red: '#ef858c',
+    green: '#69bd83',
+    blue: '#54c3f1',
+    yellow: '#f2e55c',
+  };
 
-  const [songsJson, setSongsJson] = useState([]);
-  const updateSong = async (index) => {
-    const song = {
-      title,
-      artist,
-      url,
-      lyric,
-    };
+  const source = {
+    html: lyric
+    .replace(/\n/g, '<br>')
+    .replace(colorPattern, (match, color, text) => {
+      const backgroundColor = colorMap[color]
+      return `<span style="background-color: ${backgroundColor};">${text}</span>`
+    })
+  };
+
+  const { width } = useWindowDimensions();
+  const baseStyle = { fontSize: 20 };
+
+  // 歌情報を更新する
+  const index = props.index
+  const onPressDisabled = !(title && artist && url && lyric);
+
+  const updateSong = async () => {
+    const song = { title, artist, url, lyric, };
 
     try {
-      const songsString = await AsyncStorage.getItem('songs');
-      const songsJson = songsString ? JSON.parse(songsString) : [];
-      songsJson.push(song);
-      await AsyncStorage.setItem('songs', JSON.stringify(songsJson));
-      const newSongsJson = songsJson.filter((_, i) => i !== index);
-      setSongsJson(newSongsJson);
-      await AsyncStorage.setItem('songs', JSON.stringify(newSongsJson));
-      setTitle('');
-      setArtist('');
-      setUrl('');
-      setLyric('');
+      const songsJsonStr = await AsyncStorage.getItem('songs');
+      const songsJsonObj = songsJsonStr ? JSON.parse(songsJsonStr) : [];
+      const newSongsJsonObj = [song, ...songsJsonObj.filter((_, i) => i !== index)];
+      await AsyncStorage.setItem('songs', JSON.stringify(newSongsJsonObj));
     } catch (error) {
       console.error(error);
     }
@@ -48,17 +50,20 @@ const EditSong = (props) => {
 
   return (
     <View style={styles.container}>
+      {/* ヘッダー */}
       <TouchableOpacity
         onPress={() => props.switchPage('home')}
         style={styles.backHome}
       >
         <Image source={require('../../assets/back.png')} />
       </TouchableOpacity>
-      <View style={styles.addSongContainer}>
-        <Text style={styles.addSong}>
+      <View style={styles.editSongContainer}>
+        <Text style={styles.editSong}>
           歌の編集
         </Text>
       </View>
+
+      {/* 歌情報の入力 */}
       <View style={styles.inputContainer}>
         <ScrollView>
           <TextInput
@@ -79,13 +84,15 @@ const EditSong = (props) => {
             value={url}
             onChangeText={setUrl}
           />
+
+          {/* プレビュー */}
           <View style={styles.previewButtonContainer}>
             <TouchableOpacity
               onPress={() => setPreview(!preview)}
               activeOpacity={0.8}
             >
               <View style={styles.previewButton}>
-                <Text style={styles.storeButtonText}>{preview ? 'Edit' : 'Preview'}</Text>
+                <Text style={styles.previewButtonText}>{preview ? 'Edit' : 'Preview'}</Text>
               </View>
             </TouchableOpacity>
           </View>
@@ -95,15 +102,15 @@ const EditSong = (props) => {
               green(<Text style={{ backgroundColor: '#69bd83' }}>緑</Text>),
               blue(<Text style={{ backgroundColor: '#54c3f1' }}>青</Text>),
               yellow(<Text style={{ backgroundColor: '#f2e55c' }}>黄</Text>)
-              </Text>
+            </Text>
           </View>
           {preview ? (
             <View style={styles.lyricContainer}>
               <ScrollView nestedScrollEnabled={true}>
-                <HTML
-                  baseStyle={{ fontSize: 20 }}
-                  source={{ html: lyricHTML }}
+                <RenderHTML
+                  source={source}
                   contentWidth={width}
+                  baseStyle={baseStyle}
                 />
               </ScrollView>
             </View>
@@ -118,16 +125,19 @@ const EditSong = (props) => {
           )}
         </ScrollView>
       </View>
-      <View style={styles.storeButtonContainer}>
+
+      {/* 更新 */}
+      <View style={styles.updateButtonContainer}>
         <TouchableOpacity
+          disabled={onPressDisabled}
           onPress={() => {
-            updateSong(props.index);
+            updateSong();
             props.switchPage('home');
           }}
           activeOpacity={0.8}
         >
-          <View style={styles.storeButton}>
-            <Text style={styles.storeButtonText}>更新</Text>
+          <View style={[styles.updateButton, onPressDisabled && styles.disabledButton]}>
+            <Text style={styles.updateButtonText}>更新</Text>
           </View>
         </TouchableOpacity>
       </View>
@@ -140,20 +150,24 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
   },
+
+  // ヘッダー
   backHome: {
     position: 'absolute',
     top: 71.5,
     left: 25,
   },
-  addSongContainer: {
+  editSongContainer: {
     position: 'absolute',
     top: 70,
     left: 65,
   },
-  addSong: {
+  editSong: {
     fontSize: 24,
     fontWeight: 'bold',
   },
+
+  // 歌情報の入力
   inputContainer: {
     top: 150,
   },
@@ -164,26 +178,8 @@ const styles = StyleSheet.create({
     padding: 10,
     margin: 5,
   },
-  inputLyric: {
-    borderWidth: 1,
-    borderColor: 'gray',
-    borderRadius: 5,
-    padding: 10,
-    marginHorizontal: 5,
-    marginBottom: 300,
-  },
-  lyricContainer: {
-    width: '90%',
-    aspectRatio: 1,
-    alignSelf: 'center',
-    backgroundColor: '#f0f0f0',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 300,
-  },
-  descriptionContainer: {
-    margin: 10,
-  },
+
+  // プレビュー
   previewButtonContainer: {
     alignItems: 'center',
   },
@@ -196,23 +192,48 @@ const styles = StyleSheet.create({
   },
   previewButtonText: {
     color: 'white',
-    fontSize: 10,
+    fontSize: 16,
   },
-  storeButtonContainer: {
+  descriptionContainer: {
+    margin: 10,
+  },
+  lyricContainer: {
+    width: '90%',
+    aspectRatio: 1,
+    alignSelf: 'center',
+    backgroundColor: '#f0f0f0',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 300,
+  },
+  inputLyric: {
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 5,
+    padding: 10,
+    marginHorizontal: 5,
+    marginBottom: 300,
+  },
+
+  // 更新
+  updateButtonContainer: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
     alignItems: 'center',
   },
-  storeButton: {
+  updateButton: {
     backgroundColor: '#235BC8',
     height: 100,
     width: 1000,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  storeButtonText: {
+  disabledButton: {
+    backgroundColor: 'gray',
+  },
+  updateButtonText: {
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',

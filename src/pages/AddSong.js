@@ -40,7 +40,7 @@ const AddSong = (props) => {
     try {
       const songsJsonStr = await AsyncStorage.getItem('songs');
       const songsJsonObj = songsJsonStr ? JSON.parse(songsJsonStr) : [];
-      const newSongsJsonObj = [...songsJsonObj, song];
+      const newSongsJsonObj = [song, ...songsJsonObj];
       await AsyncStorage.setItem('songs', JSON.stringify(newSongsJsonObj));
     } catch (error) {
       console.error(error);

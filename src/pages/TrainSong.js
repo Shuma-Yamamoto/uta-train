@@ -78,15 +78,14 @@ const TrainSong = (props) => {
         </ScrollView>
       </View>
 
-      {/* ボタン */}
-      <View style={styles.buttonContainer}>
+      {/* 再生位置を３秒戻す */}
+      <View style={styles.seekButtonContainer}>
         <TouchableOpacity
           onPress={seekBackward}
+          style={styles.seekButton}
           activeOpacity={0.8}
         >
-          <View style={styles.button}>
-            <Text style={styles.buttonText}>3&nbsp;sec.</Text>
-          </View>
+          <Text style={styles.seekButtonText}>3&nbsp;sec.</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -143,22 +142,22 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
 
-  // ボタン
-  buttonContainer: {
+  // 再生位置を３秒戻す
+  seekButtonContainer: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
     alignItems: 'center',
   },
-  button: {
+  seekButton: {
     backgroundColor: '#235BC8',
     height: 100,
     width: 1000,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  buttonText: {
+  seekButtonText: {
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',

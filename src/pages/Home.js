@@ -1,116 +1,113 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, ScrollView, Text, TouchableOpacity, RefreshControl } from 'react-native';
+import { StyleSheet, View, ScrollView, Text, TouchableOpacity, RefreshControl, Modal } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AddSong from './AddSong';
 import EditSong from './EditSong';
 import TrainSong from './TrainSong';
 
 const Home = () => {
+  // ページの切り替え
   const [page, setPage] = useState('home');
   const switchPage = (newPage) => {
     setPage(newPage);
   };
 
-  const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
-
-  const handleDeletePress = () => {
-    setShowDeleteConfirmation(true);
-  };
-
-  const handleDeleteConfirmed = () => {
-    deleteSong(index);
-    setShowDeleteConfirmation(false);
-  };
-
-  const handleDeleteCancelled = () => {
-    setShowDeleteConfirmation(false);
-  };
-
-  const deleteConfirmationPopup = (
-    <View style={{ flex: 1, top: 100 }}>
-      <Text>本当に削除しますか？</Text>
-      <TouchableOpacity onPress={handleDeleteConfirmed}>
-        <Text>はい</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={handleDeleteCancelled}>
-        <Text>いいえ</Text>
-      </TouchableOpacity>
-    </View>
-  );
-
-  const [refreshing, setRefreshing] = useState(false);
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-
-    setTimeout(() => {
-      setRefreshing(false);
-      reloadSongs().then(() => setRefreshing(false));
-    });
-  });
-
-  const [index, setIndex] = useState(0);
-  const [title, setTitle] = useState('');
-  const [artist, setArtist] = useState('');
-  const [url, setUrl] = useState('');
-  const [lyric, setLyric] = useState('');
-  const trainSong = (trainIndex, trainTitle, trainArtist, trainUrl, trainLyric) => {
-    setIndex(trainIndex);
-    setTitle(trainTitle);
-    setArtist(trainArtist);
-    setUrl(trainUrl);
-    setLyric(trainLyric);
-  }
-
-  const [songsJson, setSongsJson] = useState([]);
+  // 歌情報を読み込む
+  const [songs, setSongs] = useState([]);
   const loadSongs = async () => {
     try {
-      const songsString = await AsyncStorage.getItem('songs');
-      return songsString ? JSON.parse(songsString) : [];
+      const songsJsonStr = await AsyncStorage.getItem('songs');
+      const songsJsonObj = songsJsonStr ? JSON.parse(songsJsonStr) : [];
+      setSongs(songsJsonObj);
     } catch (error) {
       console.error(error);
     }
   };
 
-  const reloadSongs = async () => {
-    const storedSongs = await loadSongs();
-    setSongsJson(storedSongs);
-  };
-
+  // 初回のみ自動で読み込み
   useEffect(() => {
-    reloadSongs();
+    loadSongs();
   }, []);
 
-  const deleteSong = async (index) => {
+  // ２回目以降はスワイプで読み込み
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await loadSongs();
+    setRefreshing(false);
+  };
+
+  // propsの設定
+  const [index, setIndex] = useState(0);
+  const [title, setTitle] = useState('');
+  const [artist, setArtist] = useState('');
+  const [url, setUrl] = useState('');
+  const [lyric, setLyric] = useState('');
+
+  const songProps = (indexProp, titleProp, artistProp, urlProp, lyricProp) => {
+    setIndex(indexProp);
+    setTitle(titleProp);
+    setArtist(artistProp);
+    setUrl(urlProp);
+    setLyric(lyricProp);
+  };
+
+  // 歌情報を削除する
+  const deleteSong = async () => {
     try {
-      const newSongsJson = songsJson.filter((_, i) => i !== index);
-      setSongsJson(newSongsJson);
-      AsyncStorage.setItem('songs', JSON.stringify(newSongsJson));
+      const newSongsJsonObj = songs.filter((_, i) => i !== index);
+      await AsyncStorage.setItem('songs', JSON.stringify(newSongsJsonObj));
+      setSongs(newSongsJsonObj);
     } catch (error) {
-    console.log(error);
+    console.error(error);
     }
+  };
+
+  // 本当に削除しますか？
+  const [confirmation, setConfirmation] = useState(false);
+
+  const onPressConfirm = () => {
+    setConfirmation(true);
+  };
+
+  const confirmDelete = () => {
+    deleteSong();
+    setConfirmation(false);
+  };
+
+  const cancelDelete = () => {
+    setConfirmation(false);
   };
 
   switch (page) {
     case 'home':
       return (
         <View style={styles.container}>
+          {/* ヘッダー */}
           <View style={styles.songIndexContainer}>
             <Text style={styles.songIndex}>
               歌一覧
             </Text>
           </View>
-          {showDeleteConfirmation && deleteConfirmationPopup}
+
+          {/* 歌情報一覧 */}
           <View style={styles.cardContainer}>
-          <ScrollView
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-          >
-              {songsJson.map((item, index) => (
+            {/* スワイプで読み込み */}
+            <ScrollView
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                />
+              }
+            >
+
+              {songs.map((item, index) => (
                 <View key={index}>
+                  {/* 歌練習画面へ遷移 */}
                   <TouchableOpacity
                     onPress={() => {
-                      trainSong(index, item.title, item.artist, item.url.slice(-11), item.lyric);
+                      songProps(index, item.title, item.artist, item.url.slice(-11), item.lyric);
                       switchPage('train');
                     }}
                     style={styles.songContainer}
@@ -118,34 +115,67 @@ const Home = () => {
                     <Text style={styles.title}>{item.title}</Text>
                     <Text style={styles.artist}>&nbsp;{item.artist}</Text>
                   </TouchableOpacity>
+
+                  {/* 歌情報を編集・削除する */}
                   <View style={styles.optionContainer}>
+                    {/* 歌編集画面へ遷移 */}
                     <TouchableOpacity
                       onPress={() => {
-                        trainSong(index, item.title, item.artist, item.url, item.lyric);
+                        songProps(index, item.title, item.artist, item.url, item.lyric);
                         switchPage('edit');
                       }}
                     >
-                        <Text>Edit</Text>
+                      <Text>Edit</Text>
                     </TouchableOpacity>
                     <Text>&nbsp;|&nbsp;</Text>
-                    <TouchableOpacity onPress={handleDeletePress}>
-                        <Text style={{ color: 'red' }}>Delete</Text>
+                    {/* 歌情報を削除する */}
+                    <TouchableOpacity
+                      onPress={() => {
+                        setIndex(index)
+                        onPressConfirm()
+                      }}
+                    >
+                      <Text style={{ color: 'red' }}>Delete</Text>
                     </TouchableOpacity>
                   </View>
                 </View>
               ))}
             </ScrollView>
           </View>
+
+          {/* 歌追加画面へ遷移 */}
           <View style={styles.addButtonContainer}>
             <TouchableOpacity
               onPress={() => switchPage('add')}
+              style={styles.addButton}
               activeOpacity={0.8}
             >
-              <View style={styles.addButton}>
-                <Text style={styles.addButtonText}>歌の追加</Text>
-              </View>
+              <Text style={styles.addButtonText}>歌の追加</Text>
             </TouchableOpacity>
           </View>
+
+          {/* 本当に削除しますか？ */}
+          <Modal visible={confirmation} animationType="fade">
+            <View style={styles.modalContainer}>
+              <View style={styles.confirmContainer}>
+                <Text style={styles.confirmText}>本当に削除しますか？</Text>
+                <View style={styles.confirmButtonContainer}>
+                  <TouchableOpacity
+                    onPress={confirmDelete}
+                    style={styles.confirmButton}
+                  >
+                    <Text style={styles.confirmButtonText}>はい</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={cancelDelete}
+                    style={styles.cancelButton}
+                  >
+                    <Text style={styles.cancelButtonText}>いいえ</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
         </View>
       )
     case 'add':
@@ -155,7 +185,6 @@ const Home = () => {
     case 'edit':
       return (
         <EditSong switchPage={switchPage}
-          songsJson={songsJson}
           index={index}
           title={title}
           artist={artist}
@@ -181,15 +210,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
   },
-  addSongContainer: {
-    position: 'absolute',
-    top: 70,
-    left: 65,
-  },
-  addSong: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
+  // ヘッダー
   songIndexContainer: {
     position: 'absolute',
     top: 70,
@@ -199,11 +220,15 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
   },
+
+  // 歌情報一覧
   cardContainer: {
     top: 125,
     width: '100%',
     height: '65%',
   },
+
+  // 歌練習画面へ遷移
   songContainer: {
     width: '100%',
     borderTopWidth: 1.5,
@@ -220,11 +245,15 @@ const styles = StyleSheet.create({
   artist: {
     fontSize: 14,
   },
+
+  // 歌情報を編集・削除する
   optionContainer: {
     flexDirection: 'row',
     alignSelf: 'flex-end',
     marginRight: 5,
   },
+
+  // 歌追加画面へ遷移
   addButtonContainer: {
     position: 'absolute',
     bottom: 0,
@@ -240,6 +269,49 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   addButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+
+  // 本当に削除しますか？
+  modalContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  confirmContainer: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  confirmText: {
+    fontSize: 18,
+    marginBottom: 20,
+  },
+  confirmButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  confirmButton: {
+    padding: 10,
+    borderColor: 'black',
+    borderWidth: 1,
+    borderRadius: 5,
+    marginHorizontal: 10,
+  },
+  confirmButtonText: {
+    fontSize: 16,
+  },
+  cancelButton: {
+    backgroundColor: 'red',
+    padding: 10,
+    borderRadius: 5,
+    marginHorizontal: 10,
+  },
+  cancelButtonText: {
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',

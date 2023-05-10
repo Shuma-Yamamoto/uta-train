@@ -59,7 +59,7 @@ const Home = () => {
       await AsyncStorage.setItem('songs', JSON.stringify(newSongsJsonObj));
       setSongs(newSongsJsonObj);
     } catch (error) {
-    console.log(error);
+    console.error(error);
     }
   };
 

@@ -63,7 +63,7 @@ const EditSong = (props) => {
         </Text>
       </View>
 
-      {/* 歌情報の入力 */}
+      {/* 歌情報を入力する */}
       <View style={styles.inputContainer}>
         <ScrollView>
           <TextInput
@@ -89,11 +89,10 @@ const EditSong = (props) => {
           <View style={styles.previewButtonContainer}>
             <TouchableOpacity
               onPress={() => setPreview(!preview)}
+              style={styles.previewButton}
               activeOpacity={0.8}
             >
-              <View style={styles.previewButton}>
-                <Text style={styles.previewButtonText}>{preview ? 'Edit' : 'Preview'}</Text>
-              </View>
+              <Text style={styles.previewButtonText}>{preview ? 'Edit' : 'Preview'}</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.descriptionContainer}>
@@ -126,19 +125,18 @@ const EditSong = (props) => {
         </ScrollView>
       </View>
 
-      {/* 更新 */}
+      {/* 歌情報を更新する */}
       <View style={styles.updateButtonContainer}>
         <TouchableOpacity
-          disabled={onPressDisabled}
           onPress={() => {
             updateSong();
             props.switchPage('home');
           }}
+          style={[styles.updateButton, onPressDisabled && styles.disabledButton]}
+          disabled={onPressDisabled}
           activeOpacity={0.8}
         >
-          <View style={[styles.updateButton, onPressDisabled && styles.disabledButton]}>
-            <Text style={styles.updateButtonText}>更新</Text>
-          </View>
+          <Text style={styles.updateButtonText}>更新</Text>
         </TouchableOpacity>
       </View>
     </View>

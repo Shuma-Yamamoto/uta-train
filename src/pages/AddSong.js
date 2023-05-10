@@ -62,7 +62,7 @@ const AddSong = (props) => {
         </Text>
       </View>
 
-      {/* 歌情報の入力 */}
+      {/* 歌情報を入力する */}
       <View style={styles.inputContainer}>
         <ScrollView>
           <TextInput
@@ -88,11 +88,10 @@ const AddSong = (props) => {
           <View style={styles.previewButtonContainer}>
             <TouchableOpacity
               onPress={() => setPreview(!preview)}
+              style={styles.previewButton}
               activeOpacity={0.8}
             >
-              <View style={styles.previewButton}>
-                <Text style={styles.previewButtonText}>{preview ? 'Edit' : 'Preview'}</Text>
-              </View>
+              <Text style={styles.previewButtonText}>{preview ? 'Edit' : 'Preview'}</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.descriptionContainer}>
@@ -125,19 +124,18 @@ const AddSong = (props) => {
         </ScrollView>
       </View>
 
-      {/* 保存 */}
+      {/* 歌情報を保存する */}
       <View style={styles.storeButtonContainer}>
         <TouchableOpacity
-          disabled={onPressDisabled}
           onPress={() => {
             saveSong();
             props.switchPage('home');
           }}
+          style={[styles.storeButton, onPressDisabled && styles.disabledButton]}
+          disabled={onPressDisabled}
           activeOpacity={0.8}
         >
-          <View style={[styles.storeButton, onPressDisabled && styles.disabledButton]}>
-            <Text style={styles.storeButtonText}>保存</Text>
-          </View>
+          <Text style={styles.storeButtonText}>保存</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -166,7 +164,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 
-  // 歌情報の入力
+  // 歌情報を入力する
   inputContainer: {
     top: 150,
   },
@@ -214,7 +212,7 @@ const styles = StyleSheet.create({
     marginBottom: 300,
   },
 
-  // 保存
+  // 歌情報を保存する
   storeButtonContainer: {
     position: 'absolute',
     bottom: 0,

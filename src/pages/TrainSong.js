@@ -47,16 +47,18 @@ const TrainSong = (props) => {
   return (
     <View style={styles.container}>
       {/* ヘッダー */}
-      <TouchableOpacity
-        onPress={() => props.switchPage('home')}
-        style={styles.backHome}
-      >
-        <Image source={require('../../assets/back.png')} />
-      </TouchableOpacity>
-      <View style={styles.titleContainer}>
-        <Text style={styles.title}>
-          {props.title}
-        </Text>
+      <View style={styles.nobr}>
+        <TouchableOpacity
+          onPress={() => props.switchPage('home')}
+          style={styles.backHome}
+        >
+          <Image source={require('../../assets/back.png')} />
+        </TouchableOpacity>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>
+            {props.title}
+          </Text>
+        </View>
       </View>
       <View style={styles.artistContainer}>
         <Text style={styles.artist}>
@@ -65,24 +67,26 @@ const TrainSong = (props) => {
       </View>
 
       {/* YouTube */}
-      <View style={styles.youtubeContainer}>
-        <YouTube
-          ref={playerRef}
-          height={300}
-          videoId={props.url}
-        />
-      </View>
-
-      {/* 歌詞 */}
-      <View style={styles.lyricContainer}>
-        <ScrollView>
-          <RenderHTML
-            source={source}
-            contentWidth={width}
-            baseStyle={baseStyle}
+      <ScrollView>
+        <View style={styles.youtubeContainer}>
+          <YouTube
+            ref={playerRef}
+            height={250}
+            videoId={props.url}
           />
-        </ScrollView>
-      </View>
+        </View>
+
+        {/* 歌詞 */}
+        <View style={styles.lyricContainer}>
+          <ScrollView nestedScrollEnabled={true}>
+            <RenderHTML
+              source={source}
+              contentWidth={width}
+              baseStyle={baseStyle}
+            />
+          </ScrollView>
+        </View>
+      </ScrollView>
 
       {/* 再生位置を３秒戻す */}
       <View style={styles.seekButtonContainer}>
@@ -105,24 +109,24 @@ const styles = StyleSheet.create({
   },
 
   // ヘッダー
+  nobr: {
+    flexDirection: 'row',
+    marginTop: 15,
+    marginLeft: 10,
+  },
   backHome: {
-    position: 'absolute',
-    top: 71.5,
-    left: 25,
+    marginTop: 1.5,
   },
   titleContainer: {
-    position: 'absolute',
-    top: 70,
-    left: 65,
+    marginLeft: 5,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
   },
   artistContainer: {
-    position: 'absolute',
-    top: 110,
-    left: 70,
+    marginTop: 2.5,
+    marginLeft: 45,
   },
   artist: {
     fontSize: 20,
@@ -131,18 +135,18 @@ const styles = StyleSheet.create({
 
   // YouTube
   youtubeContainer: {
-    top: 150,
+    marginTop: 15,
   },
 
   // 歌詞
   lyricContainer: {
-    top: 95,
     width: '90%',
     aspectRatio: 1,
     alignSelf: 'center',
     backgroundColor: '#f0f0f0',
     borderRadius: 5,
     padding: 10,
+    marginBottom: 300,
   },
   lyric: {
     fontSize: 20,
@@ -164,7 +168,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   seekButtonText: {
-    color: 'white',
+    color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },

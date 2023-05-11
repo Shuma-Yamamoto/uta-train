@@ -57,79 +57,79 @@ const EditSong = (props) => {
   return (
     <View style={styles.container}>
       {/* ヘッダー */}
-      <TouchableOpacity
-        onPress={() => props.switchPage('home')}
-        style={styles.backHome}
-      >
-        <Image source={require('../../assets/back.png')} />
-      </TouchableOpacity>
-      <View style={styles.editSongContainer}>
-        <Text style={styles.editSong}>
-          歌の編集
-        </Text>
+      <View style={styles.nobr}>
+        <TouchableOpacity
+          onPress={() => props.switchPage('home')}
+          style={styles.backHome}
+        >
+          <Image source={require('../../assets/back.png')} />
+        </TouchableOpacity>
+        <View style={styles.editSongContainer}>
+          <Text style={styles.editSong}>
+            歌の編集
+          </Text>
+        </View>
       </View>
 
       {/* 歌情報を入力する */}
-      <View style={styles.inputContainer}>
-        <ScrollView>
-          <TextInput
-            style={styles.input}
-            placeholder="曲名"
-            value={title}
-            onChangeText={setTitle}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="歌手"
-            value={artist}
-            onChangeText={setArtist}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="URL"
-            value={url}
-            onChangeText={setUrl}
-          />
+      <ScrollView>
+        <TextInput
+          style={styles.input}
+          placeholder="曲名"
+          value={title}
+          onChangeText={setTitle}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="歌手"
+          value={artist}
+          onChangeText={setArtist}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="URL"
+          value={url}
+          onChangeText={setUrl}
+        />
 
-          {/* プレビュー */}
-          <View style={styles.previewButtonContainer}>
-            <TouchableOpacity
-              onPress={() => setPreview(!preview)}
-              style={styles.previewButton}
-              activeOpacity={0.8}
-            >
-              <Text style={styles.previewButtonText}>{preview ? 'Edit' : 'Preview'}</Text>
-            </TouchableOpacity>
+        {/* プレビュー */}
+        <View style={styles.previewButtonContainer}>
+          <TouchableOpacity
+            onPress={() => setPreview(!preview)}
+            style={styles.previewButton}
+            activeOpacity={0.8}
+          >
+            <Text style={styles.previewButtonText}>{preview ? 'Edit' : 'Preview'}</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.descriptionContainer}>
+          <Text>
+            red(<Text style={{ backgroundColor: '#ef858c' }}>赤</Text>),
+            green(<Text style={{ backgroundColor: '#69bd83' }}>緑</Text>),
+            blue(<Text style={{ backgroundColor: '#54c3f1' }}>青</Text>),
+            yellow(<Text style={{ backgroundColor: '#f2e55c' }}>黄</Text>)
+          </Text>
+        </View>
+        {preview ? (
+          <View style={styles.lyricContainer}>
+            <ScrollView nestedScrollEnabled={true}>
+              <RenderHTML
+                source={source}
+                contentWidth={width}
+                baseStyle={baseStyle}
+              />
+            </ScrollView>
           </View>
-          <View style={styles.descriptionContainer}>
-            <Text>
-              red(<Text style={{ backgroundColor: '#ef858c' }}>赤</Text>),
-              green(<Text style={{ backgroundColor: '#69bd83' }}>緑</Text>),
-              blue(<Text style={{ backgroundColor: '#54c3f1' }}>青</Text>),
-              yellow(<Text style={{ backgroundColor: '#f2e55c' }}>黄</Text>)
-            </Text>
-          </View>
-          {preview ? (
-            <View style={styles.lyricContainer}>
-              <ScrollView nestedScrollEnabled={true}>
-                <RenderHTML
-                  source={source}
-                  contentWidth={width}
-                  baseStyle={baseStyle}
-                />
-              </ScrollView>
-            </View>
-          ) : (
-            <TextInput
-              style={styles.inputLyric}
-              placeholder="歌詞"
-              multiline={true}
-              value={lyric}
-              onChangeText={setLyric}
-            />
-          )}
-        </ScrollView>
-      </View>
+        ) : (
+          <TextInput
+            style={styles.inputLyric}
+            placeholder="歌詞"
+            multiline={true}
+            value={lyric}
+            onChangeText={setLyric}
+          />
+        )}
+      </ScrollView>
 
       {/* 歌情報を更新する */}
       <View style={styles.updateButtonContainer}>
@@ -156,15 +156,16 @@ const styles = StyleSheet.create({
   },
 
   // ヘッダー
+  nobr: {
+    flexDirection: 'row',
+    marginVertical: 15,
+    marginLeft: 10,
+  },
   backHome: {
-    position: 'absolute',
-    top: 71.5,
-    left: 25,
+    marginTop: 1.5,
   },
   editSongContainer: {
-    position: 'absolute',
-    top: 70,
-    left: 65,
+    marginLeft: 5,
   },
   editSong: {
     fontSize: 24,
@@ -172,9 +173,6 @@ const styles = StyleSheet.create({
   },
 
   // 歌情報の入力
-  inputContainer: {
-    top: 150,
-  },
   input: {
     borderWidth: 1,
     borderColor: 'gray',
@@ -195,7 +193,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   previewButtonText: {
-    color: 'white',
+    color: '#fff',
     fontSize: 16,
   },
   descriptionContainer: {
@@ -238,7 +236,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#aaa',
   },
   updateButtonText: {
-    color: 'white',
+    color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, ScrollView, Text, TextInput, Image, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { StyleSheet, View, ScrollView, Text, TextInput, Image, TouchableOpacity, useWindowDimensions, BackHandler } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RenderHTML from 'react-native-render-html';
 
@@ -9,6 +9,12 @@ const AddSong = (props) => {
   const [url, setUrl] = useState('');
   const [lyric, setLyric] = useState('');
   const [preview, setPreview] = useState(false);
+
+  // Androidにおける戻る操作の制御
+  BackHandler.addEventListener('hardwareBackPress', () => {
+    props.switchPage('home');
+    return true;
+  });
 
   // 色付きの歌詞を表示する
   const colorPattern = /(red|green|blue|yellow)\((.*?)\)/g;
@@ -181,7 +187,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   previewButton: {
-    backgroundColor: '#235BC8',
+    backgroundColor: '#187fc4',
     height: 30,
     width: 1000,
     alignItems: 'center',
@@ -221,14 +227,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   storeButton: {
-    backgroundColor: '#235BC8',
+    backgroundColor: '#187fc4',
     height: 100,
     width: 1000,
     alignItems: 'center',
     justifyContent: 'center',
   },
   disabledButton: {
-    backgroundColor: 'gray',
+    backgroundColor: '#aaa',
   },
   storeButtonText: {
     color: 'white',

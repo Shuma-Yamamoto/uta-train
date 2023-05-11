@@ -1,9 +1,15 @@
 import React, { useRef } from 'react';
-import { StyleSheet, View, ScrollView, Text, Image, TouchableOpacity, useWindowDimensions } from 'react-native';
+import { StyleSheet, View, ScrollView, Text, Image, TouchableOpacity, useWindowDimensions, BackHandler } from 'react-native';
 import YouTube from 'react-native-youtube-iframe';
 import RenderHTML from 'react-native-render-html';
 
 const TrainSong = (props) => {
+  // Androidにおける戻る操作の制御
+  BackHandler.addEventListener('hardwareBackPress', () => {
+    props.switchPage('home');
+    return true;
+  });
+
   // 再生位置を３秒戻す
   const playerRef = useRef();
 
@@ -151,7 +157,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   seekButton: {
-    backgroundColor: '#235BC8',
+    backgroundColor: '#187fc4',
     height: 100,
     width: 1000,
     alignItems: 'center',

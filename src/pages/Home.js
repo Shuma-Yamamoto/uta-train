@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, ScrollView, Text, TouchableOpacity, RefreshControl, Modal } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AddSong from './AddSong';
 import EditSong from './EditSong';
@@ -111,33 +112,31 @@ const Home = () => {
                       switchPage('train');
                     }}
                     style={styles.songContainer}
+                    activeOpacity={0.8}
                   >
-                    <Text style={styles.title}>{item.title}</Text>
-                    <Text style={styles.artist}>&nbsp;{item.artist}</Text>
-                  </TouchableOpacity>
+                    <View>
+                      <Text style={styles.title}>{item.title}</Text>
+                      <Text style={styles.artist}>{item.artist}</Text>
+                    </View>
 
-                  {/* 歌情報を編集・削除する */}
-                  <View style={styles.optionContainer}>
-                    {/* 歌編集画面へ遷移 */}
-                    <TouchableOpacity
-                      onPress={() => {
+                    {/* 歌情報を編集・削除する */}
+                    <View style={styles.optionsContainer}>
+                      {/* 歌編集画面へ遷移 */}
+                      <TouchableOpacity onPress={() => {
                         songProps(index, item.title, item.artist, item.url, item.lyric);
                         switchPage('edit');
-                      }}
-                    >
-                      <Text>Edit</Text>
-                    </TouchableOpacity>
-                    <Text>&nbsp;|&nbsp;</Text>
-                    {/* 歌情報を削除する */}
-                    <TouchableOpacity
-                      onPress={() => {
+                      }}>
+                        <Ionicons name="create-outline" size={24} color="#fff" marginRight={0.25} />
+                      </TouchableOpacity>
+                      {/* 歌情報を削除する */}
+                      <TouchableOpacity onPress={() => {
                         setIndex(index)
                         onPressConfirm()
-                      }}
-                    >
-                      <Text style={{ color: 'red' }}>Delete</Text>
-                    </TouchableOpacity>
-                  </View>
+                      }}>
+                        <Ionicons name="trash-outline" size={24} color="#fff" marginLeft={0.25} />
+                      </TouchableOpacity>
+                    </View>
+                  </TouchableOpacity>
                 </View>
               ))}
             </ScrollView>
@@ -230,11 +229,12 @@ const styles = StyleSheet.create({
 
   // 歌練習画面へ遷移
   songContainer: {
-    width: '100%',
-    borderTopWidth: 1.5,
-    borderBottomWidth: 1.5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderTopWidth: 1.25,
+    borderBottomWidth: 1.25,
     borderColor: 'gray',
-    backgroundColor: '#f0f0f0',
     padding: 10,
     marginVertical: 5,
   },
@@ -244,13 +244,15 @@ const styles = StyleSheet.create({
   },
   artist: {
     fontSize: 14,
+    color: '#888',
   },
 
   // 歌情報を編集・削除する
-  optionContainer: {
+  optionsContainer: {
     flexDirection: 'row',
-    alignSelf: 'flex-end',
-    marginRight: 5,
+    backgroundColor: '#187fc4',
+    padding: 10,
+    borderRadius: 5,
   },
 
   // 歌追加画面へ遷移
@@ -262,7 +264,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   addButton: {
-    backgroundColor: '#235BC8',
+    backgroundColor: '#187fc4',
     height: 100,
     width: 1000,
     alignItems: 'center',
@@ -306,7 +308,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   cancelButton: {
-    backgroundColor: 'red',
+    backgroundColor: '#e60012',
     padding: 10,
     borderRadius: 5,
     marginHorizontal: 10,

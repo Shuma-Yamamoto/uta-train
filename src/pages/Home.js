@@ -207,13 +207,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
   },
   // ヘッダー
   songIndexContainer: {
-    position: 'absolute',
-    top: 70,
-    left: 20,
+    marginVertical: 15,
+    marginLeft: 15,
   },
   songIndex: {
     fontSize: 24,
@@ -222,7 +220,6 @@ const styles = StyleSheet.create({
 
   // 歌情報一覧
   cardContainer: {
-    top: 125,
     width: '100%',
     height: '65%',
   },
@@ -236,7 +233,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1.25,
     borderColor: 'gray',
     padding: 10,
-    marginVertical: 5,
+    marginBottom: 10,
   },
   title: {
     fontSize: 18,
@@ -271,7 +268,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   addButtonText: {
-    color: 'white',
+    color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },
@@ -284,7 +281,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.5)',
   },
   confirmContainer: {
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
     padding: 20,
     borderRadius: 10,
     alignItems: 'center',
@@ -314,7 +311,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
   },
   cancelButtonText: {
-    color: 'white',
+    color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
   },

@@ -227,7 +227,7 @@ const styles = StyleSheet.create({
   },
   updateButton: {
     backgroundColor: '#187fc4',
-    height: 100,
+    height: 80,
     width: 1000,
     alignItems: 'center',
     justifyContent: 'center',
@@ -237,8 +237,7 @@ const styles = StyleSheet.create({
   },
   updateButtonText: {
     color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 17,
   },
 });
 

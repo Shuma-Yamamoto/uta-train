@@ -114,10 +114,10 @@ const Home = () => {
                     style={styles.songContainer}
                     activeOpacity={0.8}
                   >
-                    <View>
+                    <ScrollView>
                       <Text style={styles.title}>{item.title}</Text>
                       <Text style={styles.artist}>{item.artist}</Text>
-                    </View>
+                    </ScrollView>
 
                     {/* 歌情報を編集・削除する */}
                     <View style={styles.optionsContainer}>
@@ -262,15 +262,14 @@ const styles = StyleSheet.create({
   },
   addButton: {
     backgroundColor: '#187fc4',
-    height: 100,
+    height: 80,
     width: 1000,
     alignItems: 'center',
     justifyContent: 'center',
   },
   addButtonText: {
     color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 17,
   },
 
   // 本当に削除しますか？

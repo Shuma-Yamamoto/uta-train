@@ -13,8 +13,8 @@ const App = () => {
             backgroundColor: '#187fc4',
           },
           headerTitleStyle: {
-            fontSize: 21,
             color: '#fff',
+            fontSize: 20,
           },
         }}>
         <Stack.Screen

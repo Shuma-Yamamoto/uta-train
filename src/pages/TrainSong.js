@@ -54,27 +54,31 @@ const TrainSong = (props) => {
         >
           <Image source={require('../../assets/back.png')} />
         </TouchableOpacity>
-        <View style={styles.titleContainer}>
+        <ScrollView
+          style={styles.titleContainer}
+          horizontal={true}
+        >
           <Text style={styles.title}>
             {props.title}
           </Text>
-        </View>
+        </ScrollView>
       </View>
-      <View style={styles.artistContainer}>
+      <ScrollView
+        style={styles.artistContainer}
+        horizontal={true}
+      >
         <Text style={styles.artist}>
           {props.artist}
         </Text>
-      </View>
+      </ScrollView>
 
-      {/* YouTube */}
       <ScrollView>
-        <View style={styles.youtubeContainer}>
-          <YouTube
-            ref={playerRef}
-            height={250}
-            videoId={props.url}
-          />
-        </View>
+        {/* YouTube */}
+        <YouTube
+          ref={playerRef}
+          height={250}
+          videoId={props.url}
+        />
 
         {/* 歌詞 */}
         <View style={styles.lyricContainer}>
@@ -123,19 +127,16 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
+    marginBottom: 2.5,
   },
   artistContainer: {
-    marginTop: 2.5,
     marginLeft: 45,
+    marginBottom: 10,
+    height: 35,
   },
   artist: {
     fontSize: 20,
     fontWeight: 'bold',
-  },
-
-  // YouTube
-  youtubeContainer: {
-    marginTop: 15,
   },
 
   // 歌詞
@@ -162,15 +163,14 @@ const styles = StyleSheet.create({
   },
   seekButton: {
     backgroundColor: '#187fc4',
-    height: 100,
+    height: 80,
     width: 1000,
     alignItems: 'center',
     justifyContent: 'center',
   },
   seekButtonText: {
     color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 18,
   },
 });
 

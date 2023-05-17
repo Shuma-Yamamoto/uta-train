@@ -103,42 +103,45 @@ const Home = () => {
               }
             >
 
-              {songs.map((item, index) => (
-                <View key={index}>
-                  {/* 歌練習画面へ遷移 */}
-                  <TouchableOpacity
-                    onPress={() => {
-                      songProps(index, item.title, item.artist, item.url.slice(-11), item.lyric);
-                      switchPage('train');
-                    }}
-                    style={styles.songContainer}
-                    activeOpacity={0.8}
-                  >
-                    <ScrollView>
-                      <Text style={styles.title}>{item.title}</Text>
-                      <Text style={styles.artist}>{item.artist}</Text>
-                    </ScrollView>
+              {songs.length === 0 ? (
+                <Text style={styles.songNull}>まだ歌が登録されていません。</Text>
+              ) : (
+                songs.map((item, index) => (
+                  <View key={index}>
+                    {/* 歌練習画面へ遷移 */}
+                    <TouchableOpacity
+                      onPress={() => {
+                        songProps(index, item.title, item.artist, item.url.slice(-11), item.lyric);
+                        switchPage('train');
+                      }}
+                      style={styles.songContainer}
+                      activeOpacity={0.8}
+                    >
+                      <ScrollView>
+                        <Text style={styles.title}>{item.title}</Text>
+                        <Text style={styles.artist}>{item.artist}</Text>
+                      </ScrollView>
 
-                    {/* 歌情報を編集・削除する */}
-                    <View style={styles.optionsContainer}>
-                      {/* 歌編集画面へ遷移 */}
-                      <TouchableOpacity onPress={() => {
-                        songProps(index, item.title, item.artist, item.url, item.lyric);
-                        switchPage('edit');
-                      }}>
-                        <Ionicons name="create-outline" size={24} color="#fff" marginRight={0.25} />
-                      </TouchableOpacity>
-                      {/* 歌情報を削除する */}
-                      <TouchableOpacity onPress={() => {
-                        setIndex(index)
-                        onPressConfirm()
-                      }}>
-                        <Ionicons name="trash-outline" size={24} color="#fff" marginLeft={0.25} />
-                      </TouchableOpacity>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              ))}
+                      {/* 歌情報を編集・削除する */}
+                      <View style={styles.optionsContainer}>
+                        {/* 歌編集画面へ遷移 */}
+                        <TouchableOpacity onPress={() => {
+                          songProps(index, item.title, item.artist, item.url, item.lyric);
+                          switchPage('edit');
+                        }}>
+                          <Ionicons name="create-outline" size={24} color="#fff" marginRight={0.25} />
+                        </TouchableOpacity>
+                        {/* 歌情報を削除する */}
+                        <TouchableOpacity onPress={() => {
+                          setIndex(index)
+                          onPressConfirm()
+                        }}>
+                          <Ionicons name="trash-outline" size={24} color="#fff" marginLeft={0.25} />
+                        </TouchableOpacity>
+                      </View>
+                    </TouchableOpacity>
+                  </View>
+              )))}
             </ScrollView>
           </View>
 
@@ -222,6 +225,9 @@ const styles = StyleSheet.create({
   cardContainer: {
     width: '100%',
     height: '65%',
+  },
+  songNull: {
+    alignSelf: 'center',
   },
 
   // 歌練習画面へ遷移

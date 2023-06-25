@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "uta-train",
+    "name": "UtaTrain",
     "slug": "uta-train",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -21,10 +21,21 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ],
+      "package": "com.shuma_yamamoto.utatrain",
+      "versionCode": 3
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d19b4532-653a-4af2-a492-d0ea0d7b0034"
+      }
     }
   }
 }

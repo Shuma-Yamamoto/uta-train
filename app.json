@@ -27,7 +27,7 @@
         "WRITE_EXTERNAL_STORAGE"
       ],
       "package": "com.shuma_yamamoto.utatrain",
-      "versionCode": 3
+      "versionCode": 4
     },
     "web": {
       "favicon": "./assets/favicon.png"

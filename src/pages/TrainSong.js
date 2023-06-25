@@ -147,7 +147,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
     borderRadius: 5,
     padding: 10,
-    marginBottom: 300,
+    marginBottom: 100,
   },
   lyric: {
     fontSize: 20,

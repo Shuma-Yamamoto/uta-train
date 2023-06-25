@@ -49,6 +49,8 @@ const EditSong = (props) => {
       const songsJsonObj = songsJsonStr ? JSON.parse(songsJsonStr) : [];
       const newSongsJsonObj = [song, ...songsJsonObj.filter((_, i) => i !== index)];
       await AsyncStorage.setItem('songs', JSON.stringify(newSongsJsonObj));
+      await props.loadSongs();
+      props.switchPage('home');
     } catch (error) {
       console.error(error);
     }
@@ -134,10 +136,7 @@ const EditSong = (props) => {
       {/* 歌情報を更新する */}
       <View style={styles.updateButtonContainer}>
         <TouchableOpacity
-          onPress={() => {
-            updateSong();
-            props.switchPage('home');
-          }}
+          onPress={() => updateSong()}
           style={[styles.updateButton, onPressDisabled && styles.disabledButton]}
           disabled={onPressDisabled}
           activeOpacity={0.8}

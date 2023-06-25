@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, ScrollView, Text, TouchableOpacity, RefreshControl, Modal } from 'react-native';
+import { StyleSheet, View, ScrollView, Text, TouchableOpacity, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AddSong from './AddSong';
@@ -25,18 +25,9 @@ const Home = () => {
     }
   };
 
-  // 初回のみ自動で読み込み
   useEffect(() => {
     loadSongs();
   }, []);
-
-  // ２回目以降はスワイプで読み込み
-  const [refreshing, setRefreshing] = useState(false);
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await loadSongs();
-    setRefreshing(false);
-  };
 
   // propsの設定
   const [index, setIndex] = useState(0);
@@ -93,16 +84,7 @@ const Home = () => {
 
           {/* 歌情報一覧 */}
           <View style={styles.cardContainer}>
-            {/* スワイプで読み込み */}
-            <ScrollView
-              refreshControl={
-                <RefreshControl
-                  refreshing={refreshing}
-                  onRefresh={onRefresh}
-                />
-              }
-            >
-
+            <ScrollView>
               {songs.length === 0 ? (
                 <Text style={styles.songNull}>まだ歌が登録されていません。</Text>
               ) : (
@@ -182,11 +164,16 @@ const Home = () => {
       )
     case 'add':
       return (
-        <AddSong switchPage={switchPage} />
+        <AddSong
+          loadSongs={loadSongs}
+          switchPage={switchPage}
+        />
       )
     case 'edit':
       return (
-        <EditSong switchPage={switchPage}
+        <EditSong
+          loadSongs={loadSongs}
+          switchPage={switchPage}
           index={index}
           title={title}
           artist={artist}

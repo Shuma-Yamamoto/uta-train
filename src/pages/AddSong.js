@@ -48,6 +48,8 @@ const AddSong = (props) => {
       const songsJsonObj = songsJsonStr ? JSON.parse(songsJsonStr) : [];
       const newSongsJsonObj = [song, ...songsJsonObj];
       await AsyncStorage.setItem('songs', JSON.stringify(newSongsJsonObj));
+      await props.loadSongs();
+      props.switchPage('home');
     } catch (error) {
       console.error(error);
     }
@@ -133,10 +135,7 @@ const AddSong = (props) => {
       {/* 歌情報を保存する */}
       <View style={styles.storeButtonContainer}>
         <TouchableOpacity
-          onPress={() => {
-            saveSong();
-            props.switchPage('home');
-          }}
+          onPress={() => saveSong()}
           style={[styles.storeButton, onPressDisabled && styles.disabledButton]}
           disabled={onPressDisabled}
           activeOpacity={0.8}
